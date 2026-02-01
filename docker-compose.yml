@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgis/postgis:15-3.3
+    container_name: property_search_db
+    environment:
+      POSTGRES_USER: property_agent
+      POSTGRES_PASSWORD: agent_password
+      POSTGRES_DB: property_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init_db.sql:/docker-entrypoint-initdb.d/01_init.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U property_agent -d property_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
